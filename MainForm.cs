@@ -38,7 +38,7 @@ namespace MacControlClick
         internal static extern int SendInput(int nInputs, ref INPUT pInputs, int cbSize);
         #endregion
 
-        bool isLClicking = false;
+        bool isLClickedOnce = false;
 
         public MainForm()
         {
@@ -70,20 +70,17 @@ namespace MacControlClick
 
         private void CheckInfo(object sender, EventArgs e)
         {
-            if (GetAsyncKeyState(Keys.LButton) != 0)
-            {
-                if (!isLClicking) isLClicking = true;
-            }
-            else isLClicking = false;
-
             if (GetAsyncKeyState(Keys.ControlKey) != 0)
             {
-                if (isLClicking)
+                if (GetAsyncKeyState(Keys.LButton) != 0)
                 {
-                    INPUT i = new INPUT
+                    if (!isLClickedOnce)
                     {
-                        type = INPUT_MOUSE,
-                        mi = {
+                        isLClickedOnce = true;
+                        INPUT i = new INPUT
+                        {
+                            type = INPUT_MOUSE,
+                            mi = {
                             dx = 0,
                             dy = 0,
                             dwFlags = MOUSEEVENTF_RIGHTDOWN,
@@ -91,10 +88,15 @@ namespace MacControlClick
                             mouseData = 0,
                             time = 0
                         }
-                    };
-                    SendInput(1, ref i, Marshal.SizeOf(i));
-                    i.mi.dwFlags = MOUSEEVENTF_RIGHTUP;
-                    SendInput(1, ref i, Marshal.SizeOf(i));
+                        };
+                        SendInput(1, ref i, Marshal.SizeOf(i));
+                        i.mi.dwFlags = MOUSEEVENTF_RIGHTUP;
+                        SendInput(1, ref i, Marshal.SizeOf(i));
+                    }
+                }
+                else
+                {
+                    isLClickedOnce = false;
                 }
             }
         }
