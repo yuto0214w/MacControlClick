@@ -81,13 +81,13 @@ namespace MacControlClick
                         {
                             type = INPUT_MOUSE,
                             mi = {
-                            dx = 0,
-                            dy = 0,
-                            dwFlags = MOUSEEVENTF_RIGHTDOWN,
-                            dwExtraInfo = IntPtr.Zero,
-                            mouseData = 0,
-                            time = 0
-                        }
+                                dx = 0,
+                                dy = 0,
+                                dwFlags = MOUSEEVENTF_RIGHTDOWN,
+                                dwExtraInfo = IntPtr.Zero,
+                                mouseData = 0,
+                                time = 0
+                            }
                         };
                         SendInput(1, ref i, Marshal.SizeOf(i));
                         i.mi.dwFlags = MOUSEEVENTF_RIGHTUP;
