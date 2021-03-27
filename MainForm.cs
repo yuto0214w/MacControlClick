@@ -38,6 +38,8 @@ namespace MacControlClick
         internal static extern int SendInput(int nInputs, ref INPUT pInputs, int cbSize);
         #endregion
 
+        bool isCtrlPressed = false;
+        bool isLClicked = false;
         bool isLClickedOnce = false;
 
         public MainForm()
@@ -72,33 +74,37 @@ namespace MacControlClick
         {
             if (GetAsyncKeyState(Keys.ControlKey) != 0)
             {
-                if (GetAsyncKeyState(Keys.LButton) != 0)
+                isCtrlPressed = true;
+            }
+            else isCtrlPressed = false;
+            if (GetAsyncKeyState(Keys.LButton) != 0)
+            {
+                if (!isLClicked)
                 {
-                    if (!isLClickedOnce)
-                    {
-                        isLClickedOnce = true;
-                        INPUT i = new INPUT
-                        {
-                            type = INPUT_MOUSE,
-                            mi = {
-                                dx = 0,
-                                dy = 0,
-                                dwFlags = MOUSEEVENTF_RIGHTDOWN,
-                                dwExtraInfo = IntPtr.Zero,
-                                mouseData = 0,
-                                time = 0
-                            }
-                        };
-                        SendInput(1, ref i, Marshal.SizeOf(i));
-                        i.mi.dwFlags = MOUSEEVENTF_RIGHTUP;
-                        SendInput(1, ref i, Marshal.SizeOf(i));
-                    }
+                    isLClicked = true;
+                    isLClickedOnce = true;
                 }
-                else
+                else isLClickedOnce = false;
+                if (isCtrlPressed && isLClickedOnce)
                 {
-                    isLClickedOnce = false;
+                    INPUT i = new INPUT
+                    {
+                        type = INPUT_MOUSE,
+                        mi = {
+                            dx = 0,
+                            dy = 0,
+                            dwFlags = MOUSEEVENTF_RIGHTDOWN,
+                            dwExtraInfo = IntPtr.Zero,
+                            mouseData = 0,
+                            time = 0
+                        }
+                    };
+                    SendInput(1, ref i, Marshal.SizeOf(i));
+                    i.mi.dwFlags = MOUSEEVENTF_RIGHTUP;
+                    SendInput(1, ref i, Marshal.SizeOf(i));
                 }
             }
+            else isLClicked = false;
         }
 
         private void RunOnLoginCheckedChanged(object sender, EventArgs e)
